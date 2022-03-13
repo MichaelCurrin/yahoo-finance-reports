@@ -42,7 +42,7 @@ HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
 URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
-SYMBOLS = ("AAPL", "BYND", "TWOU", "GOOG")
+SYMBOLS = ("MTN.JO", "AAPL", "BYND", "TWOU", "GOOG")
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
 
@@ -97,10 +97,14 @@ def get_chart_data(symbol: str, debug: bool = False):
     datetimes = [datetime.date.fromtimestamp(ts) for ts in timestamps]
     close_values = result["indicators"]["quote"][0]["close"]
 
+    if currency == "ZAc":
+        currency = "ZAR"
+        close_values = [x / 100 for x in close_values]
+
     closes = zip(datetimes, close_values)
 
     return [
-        dict(symbol=symbol, currency=currency, datetime=x[0], price=round(x[1], 2))
+        dict(datetime=x[0], symbol=symbol, currency=currency, price=round(x[1], 2))
         for x in closes
     ]
 
