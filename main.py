@@ -29,8 +29,10 @@ Data granularity
     "1mo"
     "3mo" quarterly
 """
+import csv
 import datetime
 import json
+from typing import List
 
 import requests
 
@@ -44,6 +46,8 @@ SYMBOLS = ("AAPL", "BYND", "TWOU", "GOOG")
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
 
+CSV_OUT_CHART_DATA = "chart-data.csv"
+
 
 def request_json(url, params) -> dict:
     resp = requests.get(url, params=params, headers=HEADERS)
@@ -52,6 +56,13 @@ def request_json(url, params) -> dict:
         resp.raise_for_status()
 
     return resp.json()
+
+
+def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
+    with open(path, "w", encoding="utf-8") as f_out:
+        writer = csv.DictWriter(f_out, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(out_data)
 
 
 def chart_url(symbol: str) -> str:
@@ -63,7 +74,7 @@ def chart_url(symbol: str) -> str:
     return f"{URL_CHART}/{symbol}"
 
 
-def chart_data(symbol: str, debug: bool = False):
+def get_chart_data(symbol: str, debug: bool = False):
     """
     Lookup chart data for a given symbol.
     """
@@ -87,18 +98,26 @@ def chart_data(symbol: str, debug: bool = False):
     close_values = result["indicators"]["quote"][0]["close"]
 
     closes = zip(datetimes, close_values)
-    for dt, v in closes:
-        print(f"{symbol},{str(dt)},{currency},{v:3.2f}")
 
-    return symbol, currency, closes
+    return [
+        dict(symbol=symbol, currency=currency, datetime=x[0], price=round(x[1], 2))
+        for x in closes
+    ]
+
+
+def process_chart_data():
+    chart_data = [get_chart_data(s) for s in SYMBOLS]
+    flat_chart_data = [x for group in chart_data for x in group]
+    field_names = list(flat_chart_data[0].keys())
+
+    write_csv(CSV_OUT_CHART_DATA, flat_chart_data, field_names)
 
 
 def main():
     """
     Command-line entry-point.
     """
-    for s in SYMBOLS:
-        chart_data(s)
+    process_chart_data()
 
 
 if __name__ == "__main__":
