@@ -37,7 +37,7 @@ from typing import List
 import requests
 
 # If the default is not overridden, the API gives a "Forbidden" error.
-HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
+HEADERS = {"user-agent": "github.com/MichaelCurrin/yahoo-finance-reports"}
 
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
