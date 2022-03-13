@@ -1,6 +1,33 @@
 #!/usr/bin/env python
 """
 Yahoo Finance Reports application.
+
+Valid ranges:
+    "1d",
+    "5d",
+    "1mo",
+    "3mo",
+    "6mo",
+    "1y",
+    "2y",
+    "5y",
+    "10y",
+    "ytd",
+    "max"
+
+Data granularity
+    "1m",
+    "2m",
+    "5m",
+    "15m"
+    "30m"
+    "90m"
+    "1h"
+    "1d"
+    "5d"
+    "1wk"
+    "1mo"
+    "3mo" quarterly
 """
 import datetime
 import json
@@ -10,26 +37,39 @@ import requests
 # If the default is not overridden, the API gives a "Forbidden" error.
 HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
 
+URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
+
+SYMBOLS = ("AAPL", "BYND", "TWOU", "GOOG")
+CHART_INTERVAL = "3mo"
+CHART_RANGE = "10y"
+
 
 def chart_url(symbol: str) -> str:
     """
-    Look up time series data for a given stock symbol.
+    Look up time series data for a one stock symbol.
 
     Unfortunately we can't pick just the fields we want, so get everything.
     """
-    return f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+    return f"{URL_CHART}/{symbol}"
 
 
-def process(url: str, params: dict, debug: bool = False):
-    """
-    Get and print stock data.
-    """
+def request_json(url, params) -> dict:
     resp = requests.get(url, params=params, headers=HEADERS)
 
     if not resp.ok:
         resp.raise_for_status()
 
-    resp_data = resp.json()
+    return resp.json()
+
+
+def chart_data(symbol: str, debug: bool = False):
+    """
+    Lookup chart data for a given symbol.
+    """
+    url = chart_url(symbol)
+    params = dict(interval=CHART_INTERVAL, range=CHART_RANGE)
+
+    resp_data = request_json(url, params)
 
     if debug:
         print(json.dumps(resp_data, indent=4))
@@ -40,7 +80,6 @@ def process(url: str, params: dict, debug: bool = False):
     meta = result["meta"]
     currency = meta["currency"]
     symbol = meta["symbol"]
-    print(symbol, currency)
 
     timestamps = result["timestamp"]
     datetimes = [datetime.date.fromtimestamp(ts) for ts in timestamps]
@@ -48,17 +87,17 @@ def process(url: str, params: dict, debug: bool = False):
 
     closes = zip(datetimes, close_values)
     for dt, v in closes:
-        print(f"{str(dt)} {v:3.2f}")
+        print(f"{symbol},{str(dt)},{currency},{v:3.2f}")
+
+    return symbol, currency, closes
 
 
 def main():
     """
     Command-line entry-point.
     """
-    url = chart_url("AAPL")
-    params = dict(interval="3mo", range="10y")
-
-    process(url, params)
+    for s in SYMBOLS:
+        chart_data(s)
 
 
 if __name__ == "__main__":
