@@ -36,21 +36,25 @@ from typing import List
 
 import requests
 
+from config import (
+    CHART_INTERVAL,
+    CHART_RANGE,
+    CSV_OUT_CHART_DATA,
+    CSV_OUT_QUOTE_DATA,
+    SYMBOLS,
+)
+
 # If the default is not overridden, the API gives a "Forbidden" error.
 HEADERS = {"user-agent": "github.com/MichaelCurrin/yahoo-finance-reports"}
 
+URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
-
-SYMBOLS = ("MTN.JO", "SYGESG.JO", "AAPL", "BYND", "TWOU", "GOOG")
-
-CHART_INTERVAL = "3mo"
-CHART_RANGE = "10y"
-
-CSV_OUT_CHART_DATA = "chart-data.csv"
 
 
 def request_json(url, params) -> dict:
     resp = requests.get(url, params=params, headers=HEADERS)
+
+    print("Requesting", resp.url)
 
     if not resp.ok:
         resp.raise_for_status()
@@ -65,6 +69,10 @@ def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
         writer.writerows(out_data)
 
 
+def print_debug(value) -> None:
+    print(json.dumps(value, indent=4))
+
+
 def chart_url(symbol: str) -> str:
     """
     Look up time series data for a one stock symbol.
@@ -72,6 +80,45 @@ def chart_url(symbol: str) -> str:
     Unfortunately we can't pick just the fields we want, so get everything.
     """
     return f"{URL_CHART}/{symbol}"
+
+
+def format_quote(value):
+    currency = value["currency"]
+    price = value["regularMarketPrice"]
+    low52 = value["fiftyTwoWeekLow"]
+    high52 = value["fiftyTwoWeekHigh"]
+
+    if currency == "ZAc":
+        currency = "ZAR"
+        price = price / 100
+        low52 = low52 / 100
+        high52 = high52 / 100
+
+    return dict(
+        symbol=value["symbol"],
+        short_name=value["shortName"],
+        long_name=value["longName"],
+        type=value["typeDisp"],
+        currency=currency,
+        price=price,
+    )
+
+
+def get_quote_data(symbols: List[str], debug: bool = False):
+    """
+    Lookup latest quote data for given symbols.
+    """
+    url = URL_QUOTE
+    params = dict(symbols=symbols)
+
+    resp_data = request_json(url, params)
+
+    if debug:
+        print_debug(resp_data)
+
+    result = resp_data["quoteResponse"]["result"]
+
+    return [format_quote(x) for x in result]
 
 
 def get_chart_data(symbol: str, debug: bool = False):
@@ -84,8 +131,7 @@ def get_chart_data(symbol: str, debug: bool = False):
     resp_data = request_json(url, params)
 
     if debug:
-        print(json.dumps(resp_data, indent=4))
-        return
+        print_debug(resp_data)
 
     result = resp_data["chart"]["result"][0]
 
@@ -109,6 +155,13 @@ def get_chart_data(symbol: str, debug: bool = False):
     ]
 
 
+def process_quote_data():
+    quote_data = get_quote_data(",".join(SYMBOLS))
+
+    field_names = list(quote_data[0].keys())
+    write_csv(CSV_OUT_QUOTE_DATA, quote_data, field_names)
+
+
 def process_chart_data():
     chart_data = [get_chart_data(s) for s in SYMBOLS]
     flat_chart_data = [x for group in chart_data for x in group]
@@ -121,6 +174,7 @@ def main():
     """
     Command-line entry-point.
     """
+    process_quote_data()
     process_chart_data()
 
 
