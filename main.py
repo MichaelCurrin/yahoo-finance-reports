@@ -39,10 +39,10 @@ import requests
 # If the default is not overridden, the API gives a "Forbidden" error.
 HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
 
-URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
-SYMBOLS = ("MTN.JO", "AAPL", "BYND", "TWOU", "GOOG")
+SYMBOLS = ("MTN.JO", "SYGESG.JO", "AAPL", "BYND", "TWOU", "GOOG")
+
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
 
