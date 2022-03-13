@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Yahoo Finance Reports application.
+"""
 import datetime
 import json
 
@@ -8,8 +11,12 @@ import requests
 HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
 
 
-# You can't filter to fields with this query.
 def chart_url(symbol: str) -> str:
+    """
+    Look up time series data for a given stock symbol.
+
+    Unfortunately we can't pick just the fields we want, so get everything.
+    """
     return f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 
 
