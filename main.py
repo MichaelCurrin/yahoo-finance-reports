@@ -37,20 +37,12 @@ import requests
 # If the default is not overridden, the API gives a "Forbidden" error.
 HEADERS = {"user-agent": "yahoo-finance-reports/0.0.1"}
 
+URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
 SYMBOLS = ("AAPL", "BYND", "TWOU", "GOOG")
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
-
-
-def chart_url(symbol: str) -> str:
-    """
-    Look up time series data for a one stock symbol.
-
-    Unfortunately we can't pick just the fields we want, so get everything.
-    """
-    return f"{URL_CHART}/{symbol}"
 
 
 def request_json(url, params) -> dict:
@@ -60,6 +52,15 @@ def request_json(url, params) -> dict:
         resp.raise_for_status()
 
     return resp.json()
+
+
+def chart_url(symbol: str) -> str:
+    """
+    Look up time series data for a one stock symbol.
+
+    Unfortunately we can't pick just the fields we want, so get everything.
+    """
+    return f"{URL_CHART}/{symbol}"
 
 
 def chart_data(symbol: str, debug: bool = False):
