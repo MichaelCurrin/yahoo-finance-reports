@@ -32,6 +32,7 @@ Data granularity
 import csv
 import datetime
 import json
+import sys
 from typing import List
 
 import requests
@@ -51,15 +52,25 @@ URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
 
-def request_json(url, params) -> dict:
+def request_json(symbol_description: str, url: str, params: dict) -> dict:
     resp = requests.get(url, params=params, headers=HEADERS)
 
-    print("Requesting", resp.url)
+    print("For symbols:", symbol_description)
+    print("Requesting URL", resp.url)
+
+    resp_json = resp.json()
 
     if not resp.ok:
-        resp.raise_for_status()
+        print(f"Failed to request URL. Reason - {resp.reason}", file=sys.stderr)
 
-    return resp.json()
+        if resp_json["chart"]:
+            error = resp_json["chart"]["error"]
+        else:
+            error = resp_json["quote"]["error"]
+        print(f"Code: {error['code']}. Description: {error['description']}")
+        sys.exit(1)
+
+    return resp_json
 
 
 def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
@@ -115,7 +126,7 @@ def get_quote_data(symbols: List[str], debug: bool = False):
     url = URL_QUOTE
     params = dict(symbols=symbols)
 
-    resp_data = request_json(url, params)
+    resp_data = request_json(str(symbols), url, params)
 
     if debug:
         print_debug(resp_data)
@@ -132,7 +143,7 @@ def get_chart_data(symbol: str, debug: bool = False):
     url = chart_url(symbol)
     params = dict(interval=CHART_INTERVAL, range=CHART_RANGE)
 
-    resp_data = request_json(url, params)
+    resp_data = request_json(symbol, url, params)
 
     if debug:
         print_debug(resp_data)
