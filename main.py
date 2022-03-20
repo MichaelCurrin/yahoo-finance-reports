@@ -82,7 +82,7 @@ def chart_url(symbol: str) -> str:
     return f"{URL_CHART}/{symbol}"
 
 
-def format_quote(value):
+def format_quote(value: dict) -> dict:
     currency = value["currency"]
     price = value["regularMarketPrice"]
     low52 = value["fiftyTwoWeekLow"]
@@ -98,9 +98,13 @@ def format_quote(value):
         symbol=value["symbol"],
         short_name=value["shortName"],
         long_name=value["longName"],
-        type=value["typeDisp"],
+        type_disp=value["typeDisp"],
         currency=currency,
+        quote_type=value["quoteType"],
         price=price,
+        low52=low52,
+        high52=high52,
+        region=value["region"],
     )
 
 
