@@ -112,6 +112,8 @@ def get_quote_data(symbols: List[str], debug: bool = False):
 def get_chart_data(symbol: str, debug: bool = False):
     """
     Lookup chart data for a given symbol.
+
+    TODO: Open might be better since the date is the first day of the quarter.
     """
     url = chart_url(symbol)
     params = dict(interval=CHART_INTERVAL, range=CHART_RANGE)
@@ -151,8 +153,8 @@ def process_quote_data():
 
 
 def process_chart_data():
-    chart_data = [get_chart_data(s) for s in SYMBOLS]
-    flat_chart_data = [x for group in chart_data for x in group]
+    chart_data_by_symbol = [get_chart_data(s) for s in SYMBOLS]
+    flat_chart_data = [x for group in chart_data_by_symbol for x in group]
     field_names = list(flat_chart_data[0].keys())
 
     write_csv(CSV_OUT_CHART_DATA, flat_chart_data, field_names)
