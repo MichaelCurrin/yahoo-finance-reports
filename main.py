@@ -82,7 +82,7 @@ def format_quote(value: dict) -> dict:
     return dict(
         symbol=value["symbol"],
         short_name=value["shortName"],
-        long_name=value["longName"],
+        long_name=value.get("longName", ""),
         type_disp=value["typeDisp"],
         currency=currency,
         quote_type=value["quoteType"],
