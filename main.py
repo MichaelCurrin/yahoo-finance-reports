@@ -28,6 +28,20 @@ SOUTH_AFRICAN_RANDS_CENTS = "ZAc"
 SOUTH_AFRICAN_RANDS = "ZAR"
 
 
+def print_debug(value) -> None:
+    """
+    Print object as friendly JSON value.
+    """
+    print(json.dumps(value, indent=4))
+
+
+def print_error(value):
+    """
+    Print message to stderr.
+    """
+    print(value, file=sys.stderr)
+
+
 def request_json(symbol_description: str, url: str, params: dict) -> dict:
     """
     Request given URL with parameters and return response data.
@@ -40,7 +54,7 @@ def request_json(symbol_description: str, url: str, params: dict) -> dict:
     resp_json = resp.json()
 
     if not resp.ok:
-        print(f"Failed to request URL. Reason - {resp.reason}", file=sys.stderr)
+        print_error(f"Failed to request URL. Reason - {resp.reason}")
 
         if resp_json["chart"]:
             error = resp_json["chart"]["error"]
@@ -61,13 +75,6 @@ def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
         writer = csv.DictWriter(f_out, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(out_data)
-
-
-def print_debug(value) -> None:
-    """
-    Print object as friendly JSON value.
-    """
-    print(json.dumps(value, indent=4))
 
 
 def chart_url(symbol: str) -> str:
