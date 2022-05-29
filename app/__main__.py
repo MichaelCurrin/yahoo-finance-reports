@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Yahoo Finance Reports application.
 """
@@ -8,14 +7,9 @@ from typing import List
 
 import requests
 
-import lib
-from config import (
-    CHART_INTERVAL,
-    CHART_RANGE,
-    CSV_OUT_CHART_DATA,
-    CSV_OUT_QUOTE_DATA,
-    SYMBOLS,
-)
+from . import lib
+from .config import (CHART_INTERVAL, CHART_RANGE, CSV_OUT_CHART_DATA,
+                     CSV_OUT_QUOTE_DATA, SYMBOLS)
 
 # If the default is not overridden, the API gives a "Forbidden" error.
 HEADERS = {"user-agent": "github.com/MichaelCurrin/yahoo-finance-reports"}
