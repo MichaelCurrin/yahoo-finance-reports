@@ -1,12 +1,18 @@
 # Yahoo Finance Reports
 > Exploring the Yahoo Finance API to get info on stocks of interest and report on them
 
+[![Made with Python](https://img.shields.io/badge/Python->=3.6-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
+
+[![dependency - requests](https://img.shields.io/badge/dependency-requests-blue)](https://pypi.org/project/requests)
+
+
+## Yahoo Finance API
 
 For help on using the Yahoo API endpoints, see the SyncWith site's tool:
 
 - https://syncwith.com/api/yahoo-finance/all-endpoints
 
-It lets you build and execute queries in the browser.
+It lets you build and execute queries in the browser, showing your URLs and sample output.
 
 This project uses the quote endpoint for a single stock and the chart end.
 
