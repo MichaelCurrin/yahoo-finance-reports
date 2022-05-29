@@ -155,16 +155,6 @@ def get_chart_data(symbol: str, debug: bool = False):
     ]
 
 
-def process_quote_data():
-    """
-    Write fetched quote data as a CSV.
-    """
-    quote_data = get_quote_data(",".join(SYMBOLS))
-
-    field_names = list(quote_data[0].keys())
-    write_csv(CSV_OUT_QUOTE_DATA, quote_data, field_names)
-
-
 def process_chart_data():
     """
     Write fetched chart data as a CSV.
@@ -174,6 +164,16 @@ def process_chart_data():
     field_names = list(flat_chart_data[0].keys())
 
     write_csv(CSV_OUT_CHART_DATA, flat_chart_data, field_names)
+
+
+def process_quote_data():
+    """
+    Write fetched quote data as a CSV.
+    """
+    quote_data = get_quote_data(",".join(SYMBOLS))
+
+    field_names = list(quote_data[0].keys())
+    write_csv(CSV_OUT_QUOTE_DATA, quote_data, field_names)
 
 
 def main():
