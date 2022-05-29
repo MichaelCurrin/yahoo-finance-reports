@@ -156,6 +156,9 @@ def get_chart_data(symbol: str, debug: bool = False):
 
 
 def process_quote_data():
+    """
+    Write fetched quote data as a CSV.
+    """
     quote_data = get_quote_data(",".join(SYMBOLS))
 
     field_names = list(quote_data[0].keys())
@@ -163,6 +166,9 @@ def process_quote_data():
 
 
 def process_chart_data():
+    """
+    Write fetched chart data as a CSV.
+    """
     chart_data_by_symbol = [get_chart_data(s) for s in SYMBOLS]
     flat_chart_data = [x for group in chart_data_by_symbol for x in group]
     field_names = list(flat_chart_data[0].keys())
