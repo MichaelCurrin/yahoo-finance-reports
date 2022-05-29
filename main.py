@@ -29,6 +29,9 @@ SOUTH_AFRICAN_RANDS = "ZAR"
 
 
 def request_json(symbol_description: str, url: str, params: dict) -> dict:
+    """
+    Request given URL with parameters and return response data.
+    """
     resp = requests.get(url, params=params, headers=HEADERS)
 
     print("For symbols:", symbol_description)
@@ -51,6 +54,9 @@ def request_json(symbol_description: str, url: str, params: dict) -> dict:
 
 
 def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
+    """
+    Write given data to a CSV file.
+    """
     with open(path, "w", encoding="utf-8") as f_out:
         writer = csv.DictWriter(f_out, fieldnames=field_names)
         writer.writeheader()
