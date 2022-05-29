@@ -26,7 +26,18 @@ Valid ranges:
     "ytd",
     "max"
 """
-SYMBOLS = ("VOO", "QQQ", "^RUT", "URTH", "IWV", "VRTTX", "STXRAF.JO", "SYGEU.JO")
+SYMBOLS = (
+    "VOO",
+    "QQQ",
+    "^RUT",
+    "URTH",
+    "IWV",
+    "VRTTX",
+    "STXRAF.JO",
+    "SYGEU.JO",
+    "AGGE.AS",
+    "GC=F",
+)
 
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
