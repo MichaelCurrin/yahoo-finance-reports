@@ -108,23 +108,6 @@ def format_quote(value: dict) -> dict:
     )
 
 
-def get_quote_data(symbols: List[str], debug: bool = False):
-    """
-    Lookup latest quote data for given symbols.
-    """
-    url = URL_QUOTE
-    params = dict(symbols=symbols)
-
-    resp_data = request_json(str(symbols), url, params)
-
-    if debug:
-        print_debug(resp_data)
-
-    result = resp_data["quoteResponse"]["result"]
-
-    return [format_quote(x) for x in result]
-
-
 def get_chart_data(symbol: str, debug: bool = False):
     """
     Lookup chart data for a given symbol.
@@ -159,6 +142,23 @@ def get_chart_data(symbol: str, debug: bool = False):
         dict(datetime=x[0], symbol=symbol, currency=currency, price=round(x[1], 2))
         for x in closes
     ]
+
+
+def get_quote_data(symbols: List[str], debug: bool = False):
+    """
+    Lookup latest quote data for given symbols.
+    """
+    url = URL_QUOTE
+    params = dict(symbols=symbols)
+
+    resp_data = request_json(str(symbols), url, params)
+
+    if debug:
+        print_debug(resp_data)
+
+    result = resp_data["quoteResponse"]["result"]
+
+    return [format_quote(x) for x in result]
 
 
 def process_chart_data():
