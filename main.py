@@ -71,6 +71,12 @@ def chart_url(symbol: str) -> str:
 
 
 def format_quote(value: dict) -> dict:
+    """
+    Get relevant data from a quote.
+
+    Rands are in cents so need to be converted to Rands. Short name can have
+    spaces or invisible characters which need to be stripped out.
+    """
     currency = value["currency"]
     price = value["regularMarketPrice"]
     low52 = value["fiftyTwoWeekLow"]
@@ -84,7 +90,7 @@ def format_quote(value: dict) -> dict:
 
     return dict(
         symbol=value["symbol"],
-        short_name=value["shortName"],
+        short_name=value["shortName"].strip(),
         long_name=value.get("longName", ""),
         type_disp=value["typeDisp"],
         currency=currency,
