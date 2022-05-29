@@ -64,6 +64,9 @@ def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
 
 
 def print_debug(value) -> None:
+    """
+    Print object as friendly JSON value.
+    """
     print(json.dumps(value, indent=4))
 
 
