@@ -41,6 +41,7 @@ def request_json(symbol_description: str, url: str, params: dict) -> dict:
         else:
             error = resp_json["quote"]["error"]
         print(f"Code: {error['code']}. Description: {error['description']}")
+
         sys.exit(1)
 
     return resp_json
@@ -164,8 +165,8 @@ def main():
     """
     Command-line entry-point.
     """
-    process_quote_data()
     process_chart_data()
+    process_quote_data()
 
 
 if __name__ == "__main__":
