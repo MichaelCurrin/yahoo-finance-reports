@@ -26,7 +26,7 @@ Valid ranges:
     "ytd",
     "max"
 """
-SYMBOLS = ("SNP", "SYGESG.JO", "AAPL", "BYND", "TWOU", "GOOG")
+SYMBOLS = ("VOO", "QQQ", "^RUT")
 
 CHART_INTERVAL = "3mo"
 CHART_RANGE = "10y"
