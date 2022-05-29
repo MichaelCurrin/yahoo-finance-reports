@@ -2,14 +2,13 @@
 """
 Yahoo Finance Reports application.
 """
-import csv
 import datetime
-import json
 import sys
 from typing import List
 
 import requests
 
+import lib
 from config import (
     CHART_INTERVAL,
     CHART_RANGE,
@@ -28,20 +27,6 @@ SOUTH_AFRICAN_RANDS_CENTS = "ZAc"
 SOUTH_AFRICAN_RANDS = "ZAR"
 
 
-def print_debug(value) -> None:
-    """
-    Print object as friendly JSON value.
-    """
-    print(json.dumps(value, indent=4))
-
-
-def print_error(value):
-    """
-    Print message to stderr.
-    """
-    print(value, file=sys.stderr)
-
-
 def request_json(symbol_description: str, url: str, params: dict) -> dict:
     """
     Request given URL with parameters and return response data.
@@ -54,7 +39,7 @@ def request_json(symbol_description: str, url: str, params: dict) -> dict:
     resp_json = resp.json()
 
     if not resp.ok:
-        print_error(f"Failed to request URL. Reason - {resp.reason}")
+        lib.print_error(f"Failed to request URL. Reason - {resp.reason}")
 
         if resp_json["chart"]:
             error = resp_json["chart"]["error"]
@@ -65,16 +50,6 @@ def request_json(symbol_description: str, url: str, params: dict) -> dict:
         sys.exit(1)
 
     return resp_json
-
-
-def write_csv(path: str, out_data: List[dict], field_names: List[str]) -> None:
-    """
-    Write given data to a CSV file.
-    """
-    with open(path, "w", encoding="utf-8") as f_out:
-        writer = csv.DictWriter(f_out, fieldnames=field_names)
-        writer.writeheader()
-        writer.writerows(out_data)
 
 
 def chart_url(symbol: str) -> str:
@@ -130,7 +105,7 @@ def get_chart_data(symbol: str, debug: bool = False):
     resp_data = request_json(symbol, url, params)
 
     if debug:
-        print_debug(resp_data)
+        lib.print_debug(resp_data)
 
     result = resp_data["chart"]["result"][0]
 
@@ -164,7 +139,7 @@ def get_quote_data(symbols: List[str], debug: bool = False):
     resp_data = request_json(str(symbols), url, params)
 
     if debug:
-        print_debug(resp_data)
+        lib.print_debug(resp_data)
 
     result = resp_data["quoteResponse"]["result"]
 
@@ -179,7 +154,7 @@ def process_chart_data():
     flat_chart_data = [x for group in chart_data_by_symbol for x in group]
     field_names = list(flat_chart_data[0].keys())
 
-    write_csv(CSV_OUT_CHART_DATA, flat_chart_data, field_names)
+    lib.write_csv(CSV_OUT_CHART_DATA, flat_chart_data, field_names)
 
 
 def process_quote_data():
@@ -189,7 +164,7 @@ def process_quote_data():
     quote_data = get_quote_data(",".join(SYMBOLS))
 
     field_names = list(quote_data[0].keys())
-    write_csv(CSV_OUT_QUOTE_DATA, quote_data, field_names)
+    lib.write_csv(CSV_OUT_QUOTE_DATA, quote_data, field_names)
 
 
 def main():
