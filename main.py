@@ -24,6 +24,9 @@ HEADERS = {"user-agent": "github.com/MichaelCurrin/yahoo-finance-reports"}
 URL_QUOTE = "https://query1.finance.yahoo.com/v7/finance/quote"
 URL_CHART = "https://query1.finance.yahoo.com/v8/finance/chart"
 
+SOUTH_AFRICAN_RANDS_CENTS = "ZAc"
+SOUTH_AFRICAN_RANDS = "ZAR"
+
 
 def request_json(symbol_description: str, url: str, params: dict) -> dict:
     resp = requests.get(url, params=params, headers=HEADERS)
@@ -73,8 +76,8 @@ def format_quote(value: dict) -> dict:
     low52 = value["fiftyTwoWeekLow"]
     high52 = value["fiftyTwoWeekHigh"]
 
-    if currency == "ZAc":
-        currency = "ZAR"
+    if currency == SOUTH_AFRICAN_RANDS_CENTS:
+        currency = SOUTH_AFRICAN_RANDS
         price = price / 100
         low52 = low52 / 100
         high52 = high52 / 100
