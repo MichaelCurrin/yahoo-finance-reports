@@ -6,13 +6,19 @@
 [![dependency - requests](https://img.shields.io/badge/dependency-requests-blue)](https://pypi.org/project/requests)
 
 
-## Yahoo Finance API
+## Yahoo Finance and the API
 
-For help on using the Yahoo API endpoints, see the SyncWith site's tool:
+Yahoo has a Finance section on their website for info on stock prices. 
+
+- https://finance.yahoo.com/
+
+They make this data available via a free public API - no auth needed.
+
+For help on using the Yahoo API endpoints, see the SyncWith tool:
 
 - https://syncwith.com/api/yahoo-finance/all-endpoints
 
-It lets you build and execute queries in the browser, showing your URLs and sample output.
+That interface lets you build and execute queries in the browser, showing your URLs and sample output.
 
 This project uses the _quote endpoint_ to get detailed info on stocks and the _chart endpoint_ for a timeline of values.
 
